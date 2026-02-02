@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ const menuItems = [
   { title: "Thông tin cá nhân", url: "/student/profile", icon: User },
   { title: "Đăng ký KTX", url: "/student/register", icon: FileText },
   { title: "Phòng của tôi", url: "/student/room", icon: Home },
+  { title: "Điểm danh", url: "/student/attendance", icon: UserCheck },
   { title: "Tiền điện", url: "/student/electricity", icon: Zap },
   { title: "Báo cáo sửa chữa", url: "/student/repair", icon: Wrench },
 ];
