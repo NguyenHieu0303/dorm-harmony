@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Building2,
+  ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
 const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
   { title: "Quản lý hồ sơ", url: "/admin/applications", icon: Users },
+  { title: "Quản lý điểm danh", url: "/admin/attendance", icon: ClipboardCheck },
   { title: "Quản lý sửa chữa", url: "/admin/repairs", icon: Wrench },
 ];
 
