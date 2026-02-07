@@ -8,6 +8,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Building2,
+  Home,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,8 @@ import { Button } from "@/components/ui/button";
 const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
   { title: "Quản lý hồ sơ", url: "/admin/applications", icon: Users },
+  { title: "Quản lý phòng", url: "/admin/rooms", icon: Home },
+  { title: "Tiền điện nước", url: "/admin/billing", icon: Wallet },
   { title: "Quản lý sửa chữa", url: "/admin/repairs", icon: Wrench },
 ];
 
