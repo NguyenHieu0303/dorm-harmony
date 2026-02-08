@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Check } from "lucide-react";
+import { User, Check, Upload, X, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,9 +31,16 @@ interface FormData {
   building: string;
 }
 
+interface UploadedFile {
+  name: string;
+  size: number;
+  type: string;
+}
+
 export default function Registration() {
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [formData, setFormData] = useState<FormData>({
     studentId: "",
     fullName: "",
@@ -51,6 +58,29 @@ export default function Registration() {
 
   const updateFormData = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles: UploadedFile[] = Array.from(files).map((file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      }));
+      setUploadedFiles((prev) => [...prev, ...newFiles]);
+    }
+    e.target.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   };
 
   const handleSubmit = () => {
@@ -331,8 +361,65 @@ export default function Registration() {
                     <SelectItem value="Tòa C">Tòa C</SelectItem>
                     <SelectItem value="Không yêu cầu">Không yêu cầu</SelectItem>
                   </SelectContent>
-                </Select>
+              </Select>
               </div>
+            </div>
+
+            {/* Priority Documents Upload */}
+            <h3 className="text-lg font-semibold text-foreground mt-8 mb-4">
+              Minh chứng ưu tiên (nếu có)
+            </h3>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Upload các giấy tờ chứng minh đối tượng ưu tiên: Giấy xác nhận hộ nghèo/cận nghèo, 
+                giấy chứng nhận gia đình chính sách, giấy xác nhận sinh viên vùng sâu vùng xa, v.v.
+              </p>
+              
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  onChange={handleFileUpload}
+                />
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  <Upload className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-sm font-medium text-foreground">
+                    Kéo thả file hoặc click để upload
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Hỗ trợ: PDF, JPG, PNG, DOC, DOCX (Tối đa 10MB/file)
+                  </p>
+                </label>
+              </div>
+
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-2">
+                  {uploadedFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-accent/50 rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{file.name}</p>
+                          <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}
