@@ -32,6 +32,16 @@ export interface FormData {
   address: string;
   roomType: string;
   building: string;
+  // Family emergency contact
+  familyName: string;
+  familyRelation: string;
+  familyPhone: string;
+  familyAddress: string;
+  // Extension info
+  isExtension: boolean;
+  currentRoom: string;
+  currentBuilding: string;
+  semestersStayed: number;
 }
 
 export interface UploadedFile {
@@ -58,6 +68,14 @@ export default function Registration() {
     address: "",
     roomType: "8",
     building: "",
+    familyName: "",
+    familyRelation: "",
+    familyPhone: "",
+    familyAddress: "",
+    isExtension: false,
+    currentRoom: "",
+    currentBuilding: "",
+    semestersStayed: 0,
   });
 
   const handleSubmit = () => {
