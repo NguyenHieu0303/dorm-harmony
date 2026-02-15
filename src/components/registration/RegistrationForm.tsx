@@ -1,4 +1,5 @@
-import { Upload, X, FileText, ArrowLeft, ArrowRight, CreditCard, ShieldCheck, Camera, ImageIcon } from "lucide-react";
+import { Upload, X, FileText, ArrowLeft, ArrowRight, CreditCard, ShieldCheck, Camera, ImageIcon, Users, Phone, MapPin, RefreshCw, Building, CalendarDays, AlertCircle } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import type { FormData, UploadedFile } from "@/pages/student/Registration";
 
 interface RegistrationFormProps {
@@ -30,6 +32,10 @@ const uploadCategories = [
   { id: "portrait", label: "Ảnh chân dung", icon: Camera, accept: ".jpg,.jpeg,.png" },
 ];
 
+interface ValidationErrors {
+  [key: string]: string;
+}
+
 export function RegistrationForm({
   formData,
   setFormData,
@@ -38,8 +44,62 @@ export function RegistrationForm({
   onSubmit,
   onBack,
 }: RegistrationFormProps) {
-  const updateFormData = (field: keyof FormData, value: string) => {
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
+  const updateFormData = (field: keyof FormData, value: string | boolean | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
+  const validate = (): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    if (!formData.studentId.trim()) newErrors.studentId = "Vui lòng nhập mã sinh viên";
+    if (!formData.fullName.trim()) newErrors.fullName = "Vui lòng nhập họ và tên";
+    if (!formData.dob) newErrors.dob = "Vui lòng chọn ngày sinh";
+    if (!formData.gender) newErrors.gender = "Vui lòng chọn giới tính";
+    if (!formData.cccd.trim()) newErrors.cccd = "Vui lòng nhập số CCCD";
+    else if (!/^\d{12}$/.test(formData.cccd)) newErrors.cccd = "Số CCCD phải có 12 chữ số";
+    if (!formData.class.trim()) newErrors.class = "Vui lòng nhập lớp";
+    if (!formData.faculty) newErrors.faculty = "Vui lòng chọn khoa";
+    if (!formData.email.trim()) newErrors.email = "Vui lòng nhập email";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Email không hợp lệ";
+    if (!formData.phone.trim()) newErrors.phone = "Vui lòng nhập số điện thoại";
+    else if (!/^0\d{9}$/.test(formData.phone)) newErrors.phone = "Số điện thoại phải có 10 chữ số, bắt đầu bằng 0";
+    if (!formData.address.trim()) newErrors.address = "Vui lòng nhập địa chỉ";
+
+    // Family contact validation
+    if (!formData.familyName.trim()) newErrors.familyName = "Vui lòng nhập họ tên người thân";
+    if (!formData.familyRelation) newErrors.familyRelation = "Vui lòng chọn mối quan hệ";
+    if (!formData.familyPhone.trim()) newErrors.familyPhone = "Vui lòng nhập số điện thoại người thân";
+    else if (!/^0\d{9}$/.test(formData.familyPhone)) newErrors.familyPhone = "Số điện thoại phải có 10 chữ số";
+
+    // Extension validation
+    if (formData.isExtension) {
+      if (!formData.currentRoom.trim()) newErrors.currentRoom = "Vui lòng nhập phòng hiện tại";
+      if (!formData.currentBuilding) newErrors.currentBuilding = "Vui lòng chọn tòa nhà hiện tại";
+    }
+
+    if (!formData.roomType) newErrors.roomType = "Vui lòng chọn loại phòng";
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorEl = document.querySelector(`[data-field="${Object.keys(newErrors)[0]}"]`);
+      firstErrorEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validate()) {
+      onSubmit();
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, category: string) => {
@@ -71,6 +131,22 @@ export function RegistrationForm({
       .map((f, i) => ({ ...f, originalIndex: i }))
       .filter((f) => f.category === categoryId);
 
+  const FieldError = ({ field }: { field: string }) =>
+    errors[field] ? (
+      <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+        <AlertCircle className="h-3.5 w-3.5" />
+        {errors[field]}
+      </p>
+    ) : null;
+
+  const StepHeader = ({ step, title, icon: Icon }: { step: number; title: string; icon?: React.ElementType }) => (
+    <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">{step}</span>
+      {Icon && <Icon className="h-5 w-5 text-primary" />}
+      {title}
+    </h2>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/30 to-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -80,48 +156,124 @@ export function RegistrationForm({
           <p className="text-muted-foreground mt-1">Dành cho sinh viên năm học 2024-2025</p>
         </div>
 
+        {/* Extension Toggle */}
+        <Card className="mb-6 border-primary/30 bg-accent/50">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <RefreshCw className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-medium text-foreground">Gia hạn ở KTX</p>
+                  <p className="text-sm text-muted-foreground">Dành cho sinh viên đã đăng ký và đang ở KTX trước đó</p>
+                </div>
+              </div>
+              <Switch
+                checked={formData.isExtension}
+                onCheckedChange={(v) => updateFormData("isExtension", v)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Extension Info (conditional) */}
+        {formData.isExtension && (
+          <Card className="mb-6 border-secondary/30">
+            <CardContent className="p-6">
+              <StepHeader step={0} title="Thông tin gia hạn" icon={Building} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2" data-field="currentBuilding">
+                  <Label>Tòa nhà hiện tại</Label>
+                  <Select value={formData.currentBuilding} onValueChange={(v) => updateFormData("currentBuilding", v)}>
+                    <SelectTrigger className={errors.currentBuilding ? "border-destructive" : ""}>
+                      <SelectValue placeholder="Chọn tòa nhà" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Tòa A">Tòa A</SelectItem>
+                      <SelectItem value="Tòa B">Tòa B</SelectItem>
+                      <SelectItem value="Tòa C">Tòa C</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FieldError field="currentBuilding" />
+                </div>
+                <div className="space-y-2" data-field="currentRoom">
+                  <Label>Phòng hiện tại</Label>
+                  <Input
+                    placeholder="VD: A301"
+                    value={formData.currentRoom}
+                    onChange={(e) => updateFormData("currentRoom", e.target.value)}
+                    className={errors.currentRoom ? "border-destructive" : ""}
+                  />
+                  <FieldError field="currentRoom" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Số kỳ đã ở</Label>
+                  <Select value={String(formData.semestersStayed || "")} onValueChange={(v) => updateFormData("semestersStayed", parseInt(v))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn số kỳ" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                        <SelectItem key={n} value={String(n)}>{n} kỳ</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="mt-4 p-3 rounded-lg bg-success/10 border border-success/20">
+                <p className="text-sm text-success flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  Sinh viên gia hạn không cần nộp tiền thế chấp 100.000đ cho kỳ tiếp theo.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Step 1: Personal Info */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">1</span>
-              Thông tin cá nhân
-            </h2>
+            <StepHeader step={1} title="Thông tin cá nhân" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="studentId">Mã sinh viên</Label>
-                <Input id="studentId" placeholder="VD: SV240001" value={formData.studentId} onChange={(e) => updateFormData("studentId", e.target.value)} />
+              <div className="space-y-2" data-field="studentId">
+                <Label htmlFor="studentId">Mã sinh viên <span className="text-destructive">*</span></Label>
+                <Input id="studentId" placeholder="VD: SV240001" value={formData.studentId} onChange={(e) => updateFormData("studentId", e.target.value)} className={errors.studentId ? "border-destructive" : ""} />
+                <FieldError field="studentId" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Họ và tên</Label>
-                <Input id="fullName" placeholder="Nhập họ và tên đầy đủ" value={formData.fullName} onChange={(e) => updateFormData("fullName", e.target.value)} />
+              <div className="space-y-2" data-field="fullName">
+                <Label htmlFor="fullName">Họ và tên <span className="text-destructive">*</span></Label>
+                <Input id="fullName" placeholder="Nhập họ và tên đầy đủ" value={formData.fullName} onChange={(e) => updateFormData("fullName", e.target.value)} className={errors.fullName ? "border-destructive" : ""} />
+                <FieldError field="fullName" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="dob">Ngày sinh</Label>
-                <Input id="dob" type="date" value={formData.dob} onChange={(e) => updateFormData("dob", e.target.value)} />
+              <div className="space-y-2" data-field="dob">
+                <Label htmlFor="dob">Ngày sinh <span className="text-destructive">*</span></Label>
+                <Input id="dob" type="date" value={formData.dob} onChange={(e) => updateFormData("dob", e.target.value)} className={errors.dob ? "border-destructive" : ""} />
+                <FieldError field="dob" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="gender">Giới tính</Label>
+              <div className="space-y-2" data-field="gender">
+                <Label htmlFor="gender">Giới tính <span className="text-destructive">*</span></Label>
                 <Select value={formData.gender} onValueChange={(v) => updateFormData("gender", v)}>
-                  <SelectTrigger><SelectValue placeholder="Chọn giới tính" /></SelectTrigger>
+                  <SelectTrigger className={errors.gender ? "border-destructive" : ""}><SelectValue placeholder="Chọn giới tính" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Nam</SelectItem>
                     <SelectItem value="female">Nữ</SelectItem>
                   </SelectContent>
                 </Select>
+                <FieldError field="gender" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="cccd">Số CCCD</Label>
-                <Input id="cccd" placeholder="Nhập số CCCD" value={formData.cccd} onChange={(e) => updateFormData("cccd", e.target.value)} />
+              <div className="space-y-2" data-field="cccd">
+                <Label htmlFor="cccd">Số CCCD <span className="text-destructive">*</span></Label>
+                <Input id="cccd" placeholder="Nhập số CCCD (12 chữ số)" value={formData.cccd} onChange={(e) => updateFormData("cccd", e.target.value)} className={errors.cccd ? "border-destructive" : ""} />
+                <FieldError field="cccd" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="class">Lớp</Label>
-                <Input id="class" placeholder="VD: K24-CNTT" value={formData.class} onChange={(e) => updateFormData("class", e.target.value)} />
+              <div className="space-y-2" data-field="class">
+                <Label htmlFor="class">Lớp <span className="text-destructive">*</span></Label>
+                <Input id="class" placeholder="VD: K24-CNTT" value={formData.class} onChange={(e) => updateFormData("class", e.target.value)} className={errors.class ? "border-destructive" : ""} />
+                <FieldError field="class" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="faculty">Khoa</Label>
+              <div className="space-y-2" data-field="faculty">
+                <Label htmlFor="faculty">Khoa <span className="text-destructive">*</span></Label>
                 <Select value={formData.faculty} onValueChange={(v) => updateFormData("faculty", v)}>
-                  <SelectTrigger><SelectValue placeholder="Chọn khoa" /></SelectTrigger>
+                  <SelectTrigger className={errors.faculty ? "border-destructive" : ""}><SelectValue placeholder="Chọn khoa" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="CNTT">Công nghệ thông tin</SelectItem>
                     <SelectItem value="Kinh tế">Kinh tế</SelectItem>
@@ -130,30 +282,75 @@ export function RegistrationForm({
                     <SelectItem value="Điện - Điện tử">Điện - Điện tử</SelectItem>
                   </SelectContent>
                 </Select>
+                <FieldError field="faculty" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email sinh viên</Label>
-                <Input id="email" type="email" placeholder="email@student.edu.vn" value={formData.email} onChange={(e) => updateFormData("email", e.target.value)} />
+              <div className="space-y-2" data-field="email">
+                <Label htmlFor="email">Email sinh viên <span className="text-destructive">*</span></Label>
+                <Input id="email" type="email" placeholder="email@student.edu.vn" value={formData.email} onChange={(e) => updateFormData("email", e.target.value)} className={errors.email ? "border-destructive" : ""} />
+                <FieldError field="email" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Số điện thoại</Label>
-                <Input id="phone" placeholder="Nhập số điện thoại" value={formData.phone} onChange={(e) => updateFormData("phone", e.target.value)} />
+              <div className="space-y-2" data-field="phone">
+                <Label htmlFor="phone">Số điện thoại <span className="text-destructive">*</span></Label>
+                <Input id="phone" placeholder="Nhập số điện thoại" value={formData.phone} onChange={(e) => updateFormData("phone", e.target.value)} className={errors.phone ? "border-destructive" : ""} />
+                <FieldError field="phone" />
               </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="address">Địa chỉ thường trú</Label>
-                <Textarea id="address" placeholder="Nhập địa chỉ thường trú" value={formData.address} onChange={(e) => updateFormData("address", e.target.value)} />
+              <div className="space-y-2 md:col-span-2" data-field="address">
+                <Label htmlFor="address">Địa chỉ thường trú <span className="text-destructive">*</span></Label>
+                <Textarea id="address" placeholder="Nhập địa chỉ thường trú" value={formData.address} onChange={(e) => updateFormData("address", e.target.value)} className={errors.address ? "border-destructive" : ""} />
+                <FieldError field="address" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Step 2: Upload documents */}
+        {/* Step 2: Family Emergency Contact */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">2</span>
-              Tải lên hồ sơ minh chứng
-            </h2>
+            <StepHeader step={2} title="Thông tin liên hệ gia đình (khẩn cấp)" icon={Users} />
+            <p className="text-sm text-muted-foreground mb-4 -mt-4">
+              Thông tin này được sử dụng trong trường hợp khẩn cấp cần liên lạc với gia đình sinh viên.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2" data-field="familyName">
+                <Label>Họ tên người thân <span className="text-destructive">*</span></Label>
+                <Input placeholder="Nhập họ tên người thân" value={formData.familyName} onChange={(e) => updateFormData("familyName", e.target.value)} className={errors.familyName ? "border-destructive" : ""} />
+                <FieldError field="familyName" />
+              </div>
+              <div className="space-y-2" data-field="familyRelation">
+                <Label>Mối quan hệ <span className="text-destructive">*</span></Label>
+                <Select value={formData.familyRelation} onValueChange={(v) => updateFormData("familyRelation", v)}>
+                  <SelectTrigger className={errors.familyRelation ? "border-destructive" : ""}><SelectValue placeholder="Chọn mối quan hệ" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Cha">Cha</SelectItem>
+                    <SelectItem value="Mẹ">Mẹ</SelectItem>
+                    <SelectItem value="Anh/Chị">Anh/Chị</SelectItem>
+                    <SelectItem value="Người giám hộ">Người giám hộ</SelectItem>
+                    <SelectItem value="Khác">Khác</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FieldError field="familyRelation" />
+              </div>
+              <div className="space-y-2" data-field="familyPhone">
+                <Label className="flex items-center gap-1">
+                  <Phone className="h-3.5 w-3.5" /> Số điện thoại <span className="text-destructive">*</span>
+                </Label>
+                <Input placeholder="Nhập số điện thoại người thân" value={formData.familyPhone} onChange={(e) => updateFormData("familyPhone", e.target.value)} className={errors.familyPhone ? "border-destructive" : ""} />
+                <FieldError field="familyPhone" />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5" /> Địa chỉ người thân
+                </Label>
+                <Input placeholder="Nhập địa chỉ người thân (không bắt buộc)" value={formData.familyAddress} onChange={(e) => updateFormData("familyAddress", e.target.value)} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Step 3: Upload documents */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <StepHeader step={3} title="Tải lên hồ sơ minh chứng" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {uploadCategories.map((cat) => {
@@ -199,17 +396,14 @@ export function RegistrationForm({
           </CardContent>
         </Card>
 
-        {/* Step 3: Room preferences */}
+        {/* Step 4: Room preferences */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">3</span>
-              Nguyện vọng đăng ký KTX
-            </h2>
+            <StepHeader step={4} title={formData.isExtension ? "Nguyện vọng phòng kỳ tiếp theo" : "Nguyện vọng đăng ký KTX"} />
 
             <div className="space-y-4">
-              <div className="space-y-3">
-                <Label>Loại phòng mong muốn</Label>
+              <div className="space-y-3" data-field="roomType">
+                <Label>Loại phòng mong muốn <span className="text-destructive">*</span></Label>
                 <RadioGroup value={formData.roomType} onValueChange={(v) => updateFormData("roomType", v)}>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
@@ -217,7 +411,7 @@ export function RegistrationForm({
                       { value: "6", label: "Phòng 6 người", price: "450.000đ/tháng" },
                       { value: "8", label: "Phòng 8 người", price: "350.000đ/tháng" },
                     ].map((room) => (
-                      <div key={room.value} className="flex items-center space-x-2 border rounded-lg p-4 cursor-pointer hover:border-primary transition-colors">
+                      <div key={room.value} className={`flex items-center space-x-2 border rounded-lg p-4 cursor-pointer hover:border-primary transition-colors ${formData.roomType === room.value ? "border-primary bg-primary/5" : ""}`}>
                         <RadioGroupItem value={room.value} id={`room-${room.value}`} />
                         <Label htmlFor={`room-${room.value}`} className="cursor-pointer flex-1">
                           <div className="font-medium">{room.label}</div>
@@ -227,6 +421,7 @@ export function RegistrationForm({
                     ))}
                   </div>
                 </RadioGroup>
+                <FieldError field="roomType" />
               </div>
 
               <div className="space-y-2">
@@ -245,14 +440,11 @@ export function RegistrationForm({
           </CardContent>
         </Card>
 
-        {/* Step 4: Priority docs (optional) */}
+        {/* Step 5: Priority docs (optional) */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">4</span>
-              Minh chứng ưu tiên (nếu có)
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
+            <StepHeader step={5} title="Minh chứng ưu tiên (nếu có)" />
+            <p className="text-sm text-muted-foreground mb-4 -mt-4">
               Upload các giấy tờ chứng minh đối tượng ưu tiên: Giấy xác nhận hộ nghèo/cận nghèo,
               giấy chứng nhận gia đình chính sách, giấy xác nhận sinh viên vùng sâu vùng xa, v.v.
             </p>
@@ -291,8 +483,8 @@ export function RegistrationForm({
             <ArrowLeft className="h-4 w-4" />
             Quay lại
           </Button>
-          <Button onClick={onSubmit} className="gap-2">
-            Gửi đăng ký
+          <Button onClick={handleSubmit} className="gap-2">
+            {formData.isExtension ? "Gửi gia hạn" : "Gửi đăng ký"}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

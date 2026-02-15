@@ -52,6 +52,16 @@ export function RegistrationSuccess({ formData, navigate }: RegistrationSuccessP
                 <p className="text-sm text-muted-foreground">Nguyện vọng</p>
                 <p className="font-medium text-foreground">Phòng {formData.roomType} người - {formData.building || "Không yêu cầu"}</p>
               </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Liên hệ khẩn cấp</p>
+                <p className="font-medium text-foreground">{formData.familyName || "Chưa nhập"} ({formData.familyRelation || "—"}) - {formData.familyPhone || "—"}</p>
+              </div>
+              {formData.isExtension && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Loại đăng ký</p>
+                  <p className="font-medium text-success">Gia hạn (Phòng {formData.currentRoom} - {formData.currentBuilding})</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
