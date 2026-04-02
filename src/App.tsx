@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Registration from "./pages/student/Registration";
 import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentProfile from "./pages/student/StudentProfile";
 import RoomResult from "./pages/student/RoomResult";
 import Electricity from "./pages/student/Electricity";
 import RepairReport from "./pages/student/RepairReport";
@@ -14,6 +15,7 @@ import ApplicationManagement from "./pages/admin/ApplicationManagement";
 import RoomManagement from "./pages/admin/RoomManagement";
 import BillingManagement from "./pages/admin/BillingManagement";
 import RepairManagement from "./pages/admin/RepairManagement";
+import AdminProfile from "./pages/admin/AdminProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,7 +31,8 @@ const App = () => (
           <Route path="/register" element={<Registration />} />
           
           {/* Student Routes */}
-          <Route path="/student/profile" element={<StudentDashboard />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/profile" element={<StudentProfile />} />
           <Route path="/student/register" element={<Registration />} />
           <Route path="/student/room" element={<RoomResult />} />
           <Route path="/student/electricity" element={<Electricity />} />
@@ -41,6 +44,7 @@ const App = () => (
           <Route path="/admin/rooms" element={<RoomManagement />} />
           <Route path="/admin/billing" element={<BillingManagement />} />
           <Route path="/admin/repairs" element={<RepairManagement />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
           
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

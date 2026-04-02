@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+  { title: "Thông tin cá nhân", url: "/admin/profile", icon: Users },
   { title: "Quản lý hồ sơ", url: "/admin/applications", icon: Users },
   { title: "Quản lý phòng", url: "/admin/rooms", icon: Home },
   { title: "Tiền điện nước", url: "/admin/billing", icon: Wallet },

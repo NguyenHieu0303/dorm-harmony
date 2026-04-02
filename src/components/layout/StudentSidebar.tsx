@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
+  { title: "Trang chủ", url: "/student/dashboard", icon: Home },
   { title: "Thông tin cá nhân", url: "/student/profile", icon: User },
   { title: "Đăng ký KTX", url: "/student/register", icon: FileText },
   { title: "Phòng của tôi", url: "/student/room", icon: Home },
