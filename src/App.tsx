@@ -15,6 +15,7 @@ import ApplicationManagement from "./pages/admin/ApplicationManagement";
 import RoomManagement from "./pages/admin/RoomManagement";
 import BillingManagement from "./pages/admin/BillingManagement";
 import RepairManagement from "./pages/admin/RepairManagement";
+import AdminProfile from "./pages/admin/AdminProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
