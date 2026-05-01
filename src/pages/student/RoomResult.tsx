@@ -25,8 +25,13 @@ import {
   Banknote,
   QrCode,
   Building2,
+  PartyPopper,
+  Mail,
+  Bell,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 type PaymentMethod = "bank" | "momo" | "cash";
 
