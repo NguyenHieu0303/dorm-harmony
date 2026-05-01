@@ -215,7 +215,7 @@ export default function RoomResult() {
             </Card>
 
             {/* Payment Card */}
-            <Card className={paid ? "border-success/30 bg-success/5" : "border-primary/30"}>
+            <Card id="payment-section" className={paid ? "border-success/30 bg-success/5 scroll-mt-6" : "border-primary/30 scroll-mt-6"}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span className="flex items-center gap-2">
