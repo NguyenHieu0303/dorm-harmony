@@ -25,8 +25,13 @@ import {
   Banknote,
   QrCode,
   Building2,
+  PartyPopper,
+  Mail,
+  Bell,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 type PaymentMethod = "bank" | "momo" | "cash";
 
@@ -107,6 +112,65 @@ export default function RoomResult() {
           </CardContent>
         </Card>
 
+        {/* Approval Notification Banner */}
+        {applicationStatus === "approved" && (
+          <div className="mb-6 relative overflow-hidden rounded-xl border border-success/40 bg-gradient-to-r from-success/15 via-success/10 to-primary/10 p-6 shadow-sm">
+            <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-success/10 blur-2xl" />
+            <div className="relative flex flex-col md:flex-row md:items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-lg">
+                <PartyPopper className="h-7 w-7" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge className="bg-success text-success-foreground hover:bg-success">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Hồ sơ đã được duyệt
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    Cập nhật: 20/07/2024 09:15
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-foreground">
+                  Chúc mừng! Bạn đã được phân phòng tại KTX 🎉
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Vui lòng kiểm tra thông tin phòng bên dưới và{" "}
+                  <span className="font-semibold text-foreground">
+                    hoàn tất thanh toán tiền phòng + tiền thế chấp trước 25/08/2024
+                  </span>{" "}
+                  để giữ chỗ. Nếu không thanh toán đúng hạn, phòng sẽ được phân lại cho sinh viên khác.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5" />
+                    Đã gửi thông báo qua email
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Bell className="h-3.5 w-3.5" />
+                    Đã gửi SMS tới số đăng ký
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" />
+                    Còn 36 ngày để thanh toán
+                  </span>
+                </div>
+              </div>
+              <Button
+                size="lg"
+                className="shrink-0"
+                onClick={() => {
+                  document
+                    .getElementById("payment-section")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                Thanh toán ngay
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Assigned Room (Only shown when approved) */}
         {applicationStatus === "approved" && (
           <>
@@ -151,7 +215,7 @@ export default function RoomResult() {
             </Card>
 
             {/* Payment Card */}
-            <Card className={paid ? "border-success/30 bg-success/5" : "border-primary/30"}>
+            <Card id="payment-section" className={paid ? "border-success/30 bg-success/5 scroll-mt-6" : "border-primary/30 scroll-mt-6"}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span className="flex items-center gap-2">
