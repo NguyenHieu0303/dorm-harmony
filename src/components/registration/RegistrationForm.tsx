@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import type { FormData, UploadedFile } from "@/pages/student/Registration";
+import { AvailableRoomsPicker } from "./AvailableRoomsPicker";
 
 interface RegistrationFormProps {
   formData: FormData;
