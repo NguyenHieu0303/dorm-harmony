@@ -69,6 +69,7 @@ export default function Registration() {
     address: "",
     roomType: "8",
     building: "",
+    selectedRoom: "",
     familyName: "",
     familyRelation: "",
     familyPhone: "",
