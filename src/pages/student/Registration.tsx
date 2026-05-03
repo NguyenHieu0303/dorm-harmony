@@ -32,6 +32,7 @@ export interface FormData {
   address: string;
   roomType: string;
   building: string;
+  selectedRoom: string;
   // Family emergency contact
   familyName: string;
   familyRelation: string;
