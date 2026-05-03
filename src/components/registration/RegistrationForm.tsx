@@ -399,12 +399,26 @@ export function RegistrationForm({
         {/* Step 4: Room preferences */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <StepHeader step={4} title={formData.isExtension ? "Nguyện vọng phòng kỳ tiếp theo" : "Nguyện vọng đăng ký KTX"} />
+            <StepHeader step={4} title={formData.isExtension ? "Nguyện vọng phòng kỳ tiếp theo" : "Chọn phòng ở"} />
 
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Building */}
+              <div className="space-y-2" data-field="building">
+                <Label>Bước 1: Chọn tòa nhà <span className="text-destructive">*</span></Label>
+                <Select value={formData.building} onValueChange={(v) => { updateFormData("building", v); updateFormData("selectedRoom", ""); }}>
+                  <SelectTrigger><SelectValue placeholder="Chọn tòa nhà" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Tòa A">Tòa A</SelectItem>
+                    <SelectItem value="Tòa B">Tòa B</SelectItem>
+                    <SelectItem value="Tòa C">Tòa C</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Room type */}
               <div className="space-y-3" data-field="roomType">
-                <Label>Loại phòng mong muốn <span className="text-destructive">*</span></Label>
-                <RadioGroup value={formData.roomType} onValueChange={(v) => updateFormData("roomType", v)}>
+                <Label>Bước 2: Chọn loại phòng <span className="text-destructive">*</span></Label>
+                <RadioGroup value={formData.roomType} onValueChange={(v) => { updateFormData("roomType", v); updateFormData("selectedRoom", ""); }}>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
                       { value: "4", label: "Phòng 4 người", price: "600.000đ/tháng" },
@@ -424,17 +438,16 @@ export function RegistrationForm({
                 <FieldError field="roomType" />
               </div>
 
-              <div className="space-y-2">
-                <Label>Tòa nhà ưu tiên</Label>
-                <Select value={formData.building} onValueChange={(v) => updateFormData("building", v)}>
-                  <SelectTrigger><SelectValue placeholder="Chọn tòa nhà" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Tòa A">Tòa A</SelectItem>
-                    <SelectItem value="Tòa B">Tòa B</SelectItem>
-                    <SelectItem value="Tòa C">Tòa C</SelectItem>
-                    <SelectItem value="Không yêu cầu">Không yêu cầu</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Available rooms (realtime) */}
+              <div className="space-y-3" data-field="selectedRoom">
+                <Label>Bước 3: Chọn phòng còn trống <span className="text-destructive">*</span></Label>
+                <AvailableRoomsPicker
+                  building={formData.building}
+                  roomType={formData.roomType}
+                  selected={formData.selectedRoom}
+                  onSelect={(r) => updateFormData("selectedRoom", r)}
+                />
+                <FieldError field="selectedRoom" />
               </div>
             </div>
           </CardContent>
