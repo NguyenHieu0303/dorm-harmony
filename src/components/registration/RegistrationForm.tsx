@@ -87,6 +87,8 @@ export function RegistrationForm({
     }
 
     if (!formData.roomType) newErrors.roomType = "Vui lòng chọn loại phòng";
+    if (!formData.building) newErrors.building = "Vui lòng chọn tòa nhà";
+    if (!formData.selectedRoom) newErrors.selectedRoom = "Vui lòng chọn một phòng còn trống";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
