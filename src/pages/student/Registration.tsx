@@ -32,6 +32,7 @@ export interface FormData {
   address: string;
   roomType: string;
   building: string;
+  selectedRoom: string;
   // Family emergency contact
   familyName: string;
   familyRelation: string;
@@ -68,6 +69,7 @@ export default function Registration() {
     address: "",
     roomType: "8",
     building: "",
+    selectedRoom: "",
     familyName: "",
     familyRelation: "",
     familyPhone: "",
