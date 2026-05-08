@@ -1,6 +1,7 @@
-import { Check, User } from "lucide-react";
+import { Check, User, Trophy, Sparkles, HeartHandshake, GraduationCap, MapPin, ScanLine, Calendar, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import type { FormData } from "@/pages/student/Registration";
 import type { NavigateFunction } from "react-router-dom";
 
@@ -66,15 +67,40 @@ export function RegistrationSuccess({ formData, navigate }: RegistrationSuccessP
           </CardContent>
         </Card>
 
+        {/* Quy trình xét duyệt */}
+        <Card className="mb-6 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-background">
+          <CardContent className="p-6">
+            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-primary" /> Quy trình xét duyệt theo điểm
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+              <Step n={1} icon={ScanLine} title="Chấm điểm tự động" desc="Hệ thống đọc OCR giấy tờ và chấm điểm hồ sơ trên thang 100" />
+              <Step n={2} icon={Trophy} title="Xếp hạng theo điểm" desc="Tất cả hồ sơ được sắp xếp từ cao xuống thấp" />
+              <Step n={3} icon={Target} title="Lấy đủ chỉ tiêu" desc="Top hồ sơ trong số slot của đợt sẽ được duyệt vào ở" />
+            </div>
+            <div className="rounded-lg border p-4 bg-muted/30">
+              <p className="text-xs text-muted-foreground mb-2">Tiêu chí chấm điểm (tổng 100):</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                <Crit icon={HeartHandshake} label="Đối tượng ưu tiên" max={40} />
+                <Crit icon={GraduationCap} label="Học lực" max={30} />
+                <Crit icon={MapPin} label="Khoảng cách nhà" max={20} />
+                <Crit icon={ScanLine} label="Hồ sơ & OCR" max={10} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-accent/30 border-accent">
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center shrink-0">
-                <User className="h-6 w-6 text-warning" />
+                <Calendar className="h-6 w-6 text-warning" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Trạng thái: Chờ xét duyệt</h3>
-                <p className="text-muted-foreground text-sm">Hồ sơ của bạn đang được cán bộ KTX xem xét. Thời gian xử lý thường từ 3-5 ngày làm việc.</p>
+                <h3 className="font-semibold text-foreground mb-1">Trạng thái: Chờ chấm điểm & xếp hạng</h3>
+                <p className="text-muted-foreground text-sm">
+                  Hồ sơ sẽ được chấm điểm sau khi đợt đăng ký kết thúc (dự kiến 31/07/2024). Kết quả xếp hạng và danh sách trúng tuyển sẽ thông báo qua email.
+                </p>
               </div>
             </div>
           </CardContent>
