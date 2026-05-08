@@ -114,3 +114,26 @@ export function RegistrationSuccess({ formData, navigate }: RegistrationSuccessP
     </div>
   );
 }
+
+function Step({ n, icon: Icon, title, desc }: { n: number; icon: React.ElementType; title: string; desc: string }) {
+  return (
+    <div className="rounded-lg border p-3 bg-background">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">{n}</span>
+        <Icon className="h-4 w-4 text-primary" />
+        <p className="text-sm font-medium">{title}</p>
+      </div>
+      <p className="text-xs text-muted-foreground ml-8">{desc}</p>
+    </div>
+  );
+}
+
+function Crit({ icon: Icon, label, max }: { icon: React.ElementType; label: string; max: number }) {
+  return (
+    <div className="flex items-center gap-2">
+      <Icon className="h-3.5 w-3.5 text-primary" />
+      <span>{label}</span>
+      <Badge variant="secondary" className="ml-auto text-[10px]">/{max}</Badge>
+    </div>
+  );
+}
