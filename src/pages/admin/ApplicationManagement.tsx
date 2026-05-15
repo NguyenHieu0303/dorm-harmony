@@ -416,6 +416,25 @@ export default function ApplicationManagement() {
                   </div>
                 </div>
                 <div className="md:col-span-2 space-y-4">
+                  <div className={`rounded-lg border p-3 flex items-start gap-3 ${selectedApp.type === "extension" ? "bg-emerald-500/5 border-emerald-500/30" : "bg-primary/5 border-primary/30"}`}>
+                    {selectedApp.type === "extension" ? (
+                      <RefreshCw className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                    ) : (
+                      <UserPlus className="h-5 w-5 text-primary mt-0.5" />
+                    )}
+                    <div className="text-sm">
+                      <p className="font-semibold">
+                        {selectedApp.type === "extension" ? "Hồ sơ gia hạn ở KTX" : "Hồ sơ đăng ký lần đầu"}
+                      </p>
+                      {selectedApp.type === "extension" ? (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Phòng hiện tại: <b>{selectedApp.currentRoom}</b> ({selectedApp.currentBuilding}) · Đã ở <b>{selectedApp.semestersStayed}</b> kỳ · Nguyện vọng kỳ tới: <b>{selectedApp.roomType} - {selectedApp.building}</b>
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground mt-0.5">Sinh viên lần đầu đăng ký vào ở KTX</p>
+                      )}
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <Info icon={User}      label="Họ tên"     value={selectedApp.name} />
                     <Info icon={FileText}  label="MSSV"       value={selectedApp.studentId} />
