@@ -184,6 +184,14 @@ export default function ApplicationManagement() {
                   <span className="text-warning">⏳ {waitlistCount} chờ</span>
                   <span className="text-destructive">✕ {rejectedCount} loại</span>
                 </div>
+                <div className="flex gap-2 mt-2 text-xs">
+                  <Badge variant="outline" className="border-primary/40 text-primary gap-1">
+                    <UserPlus className="h-3 w-3" /> {newCount} đăng ký mới
+                  </Badge>
+                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400 gap-1">
+                    <RefreshCw className="h-3 w-3" /> {extensionCount} gia hạn
+                  </Badge>
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
