@@ -89,6 +89,7 @@ export default function ApplicationManagement() {
   const [apps, setApps] = useState<App[]>(baseApps);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [selectedApp, setSelectedApp] = useState<App | null>(null);
   const [showAutoAssign, setShowAutoAssign] = useState(false);
 
@@ -103,8 +104,12 @@ export default function ApplicationManagement() {
       a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       a.studentId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchStatus = statusFilter === "all" || a.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchType = typeFilter === "all" || a.type === typeFilter;
+    return matchSearch && matchStatus && matchType;
   });
+
+  const newCount = apps.filter((a) => a.type === "new").length;
+  const extensionCount = apps.filter((a) => a.type === "extension").length;
 
   const approvedCount = apps.filter((a) => a.status === "approved").length;
   const rejectedCount = apps.filter((a) => a.status === "rejected").length;
