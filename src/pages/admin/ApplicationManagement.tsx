@@ -233,6 +233,16 @@ export default function ApplicationManagement() {
                   className="pl-10"
                 />
               </div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Loại hồ sơ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả loại hồ sơ</SelectItem>
+                  <SelectItem value="new">Đăng ký lần đầu</SelectItem>
+                  <SelectItem value="extension">Gia hạn</SelectItem>
+                </SelectContent>
+              </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-full md:w-56">
                   <SelectValue placeholder="Trạng thái" />
