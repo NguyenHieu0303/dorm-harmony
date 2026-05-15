@@ -59,6 +59,10 @@ type App = {
   building: string;
   submittedAt: string;
   faceImage: string;
+  type: "new" | "extension"; // đăng ký lần đầu / gia hạn
+  currentRoom?: string;       // phòng hiện tại (gia hạn)
+  currentBuilding?: string;   // tòa hiện tại (gia hạn)
+  semestersStayed?: number;   // số kỳ đã ở (gia hạn)
   score: {
     priority: number;   // /40
     gpa: number;        // /30
@@ -70,13 +74,13 @@ type App = {
 };
 
 const baseApps: App[] = [
-  { id: 1, studentId: "SV240001", name: "Nguyễn Văn An",  email: "an.nv@s.edu.vn",  phone: "0912345678", faculty: "CNTT", class: "K24-CNTT1", roomType: "8 người", building: "Tòa A", submittedAt: "15/07/2024", faceImage: mockFaceImages[0], score: { priority: 35, gpa: 27, distance: 18, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 2, studentId: "SV240002", name: "Trần Thị Bình",  email: "binh.tt@s.edu.vn", phone: "0923456789", faculty: "Kinh tế", class: "K24-KT2", roomType: "6 người", building: "Tòa B", submittedAt: "14/07/2024", faceImage: mockFaceImages[1], score: { priority: 28, gpa: 25, distance: 16, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 3, studentId: "SV240003", name: "Lê Văn Cường",   email: "cuong.lv@s.edu.vn",phone: "0934567890", faculty: "Cơ khí", class: "K24-CK1", roomType: "8 người", building: "Tòa A", submittedAt: "13/07/2024", faceImage: mockFaceImages[2], score: { priority: 40, gpa: 28, distance: 20, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 4, studentId: "SV240004", name: "Phạm Thị Dung",  email: "dung.pt@s.edu.vn", phone: "0945678901", faculty: "Ngoại ngữ", class: "K24-NN1", roomType: "4 người", building: "Tòa C", submittedAt: "12/07/2024", faceImage: mockFaceImages[3], score: { priority: 15, gpa: 20, distance: 12, documents: 8 }, ocr: { cccd: true, bhyt: false, enrollment: true, portrait: true }, status: "scored" },
-  { id: 5, studentId: "SV240005", name: "Hoàng Văn Em",   email: "em.hv@s.edu.vn",   phone: "0956789012", faculty: "Điện tử", class: "K24-DDT1", roomType: "8 người", building: "Tòa A", submittedAt: "11/07/2024", faceImage: mockFaceImages[4], score: { priority: 30, gpa: 26, distance: 19, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 6, studentId: "SV240006", name: "Đỗ Thị Phương",  email: "phuong.dt@s.edu.vn",phone: "0967890123", faculty: "CNTT", class: "K24-CNTT2", roomType: "6 người", building: "Tòa B", submittedAt: "10/07/2024", faceImage: mockFaceImages[5], score: { priority: 22, gpa: 24, distance: 14, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 7, studentId: "SV240007", name: "Vũ Minh Quang",  email: "quang.vm@s.edu.vn",phone: "0978901234", faculty: "Kinh tế", class: "K24-KT1", roomType: "8 người", building: "Tòa A", submittedAt: "09/07/2024", faceImage: mockFaceImages[6], score: { priority: 10, gpa: 22, distance: 10, documents: 7 }, ocr: { cccd: true, bhyt: false, enrollment: false, portrait: true }, status: "scored" },
+  { id: 1, studentId: "SV240001", name: "Nguyễn Văn An",  email: "an.nv@s.edu.vn",  phone: "0912345678", faculty: "CNTT", class: "K24-CNTT1", roomType: "8 người", building: "Tòa A", submittedAt: "15/07/2024", faceImage: mockFaceImages[0], type: "new", score: { priority: 35, gpa: 27, distance: 18, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 2, studentId: "SV240002", name: "Trần Thị Bình",  email: "binh.tt@s.edu.vn", phone: "0923456789", faculty: "Kinh tế", class: "K24-KT2", roomType: "6 người", building: "Tòa B", submittedAt: "14/07/2024", faceImage: mockFaceImages[1], type: "extension", currentRoom: "B305", currentBuilding: "Tòa B", semestersStayed: 2, score: { priority: 28, gpa: 25, distance: 16, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 3, studentId: "SV240003", name: "Lê Văn Cường",   email: "cuong.lv@s.edu.vn",phone: "0934567890", faculty: "Cơ khí", class: "K24-CK1", roomType: "8 người", building: "Tòa A", submittedAt: "13/07/2024", faceImage: mockFaceImages[2], type: "new", score: { priority: 40, gpa: 28, distance: 20, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 4, studentId: "SV240004", name: "Phạm Thị Dung",  email: "dung.pt@s.edu.vn", phone: "0945678901", faculty: "Ngoại ngữ", class: "K24-NN1", roomType: "4 người", building: "Tòa C", submittedAt: "12/07/2024", faceImage: mockFaceImages[3], type: "extension", currentRoom: "C201", currentBuilding: "Tòa C", semestersStayed: 4, score: { priority: 15, gpa: 20, distance: 12, documents: 8 }, ocr: { cccd: true, bhyt: false, enrollment: true, portrait: true }, status: "scored" },
+  { id: 5, studentId: "SV240005", name: "Hoàng Văn Em",   email: "em.hv@s.edu.vn",   phone: "0956789012", faculty: "Điện tử", class: "K24-DDT1", roomType: "8 người", building: "Tòa A", submittedAt: "11/07/2024", faceImage: mockFaceImages[4], type: "new", score: { priority: 30, gpa: 26, distance: 19, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 6, studentId: "SV240006", name: "Đỗ Thị Phương",  email: "phuong.dt@s.edu.vn",phone: "0967890123", faculty: "CNTT", class: "K24-CNTT2", roomType: "6 người", building: "Tòa B", submittedAt: "10/07/2024", faceImage: mockFaceImages[5], type: "extension", currentRoom: "B112", currentBuilding: "Tòa B", semestersStayed: 1, score: { priority: 22, gpa: 24, distance: 14, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 7, studentId: "SV240007", name: "Vũ Minh Quang",  email: "quang.vm@s.edu.vn",phone: "0978901234", faculty: "Kinh tế", class: "K24-KT1", roomType: "8 người", building: "Tòa A", submittedAt: "09/07/2024", faceImage: mockFaceImages[6], type: "new", score: { priority: 10, gpa: 22, distance: 10, documents: 7 }, ocr: { cccd: true, bhyt: false, enrollment: false, portrait: true }, status: "scored" },
 ];
 
 const total = (a: App) => a.score.priority + a.score.gpa + a.score.distance + a.score.documents;
