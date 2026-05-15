@@ -288,7 +288,7 @@ export default function ApplicationManagement() {
                     const t = total(a);
                     const inSlot = a.rank <= currentBatch.quota;
                     return (
-                      <TableRow key={a.id} className={inSlot ? "bg-success/5" : ""}>
+                      <TableRow key={a.id} className={`${inSlot ? "bg-success/5" : ""} ${a.type === "extension" ? "border-l-4 border-l-emerald-500/60" : "border-l-4 border-l-primary/40"}`}>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             {a.rank <= 3 && <Crown className={`h-4 w-4 ${a.rank === 1 ? "text-warning" : "text-muted-foreground"}`} />}
@@ -308,6 +308,25 @@ export default function ApplicationManagement() {
                               <p className="text-xs text-muted-foreground">{a.roomType} · {a.building}</p>
                             </div>
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {a.type === "extension" ? (
+                            <div className="space-y-1">
+                              <Badge className="gap-1 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/15">
+                                <RefreshCw className="h-3 w-3" /> Gia hạn
+                              </Badge>
+                              <p className="text-[11px] text-muted-foreground">
+                                Phòng cũ: <b>{a.currentRoom}</b> · {a.currentBuilding}
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                Đã ở <b>{a.semestersStayed}</b> kỳ
+                              </p>
+                            </div>
+                          ) : (
+                            <Badge className="gap-1 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/10">
+                              <UserPlus className="h-3 w-3" /> Đăng ký mới
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell>
                           <p className="text-sm font-medium">{a.studentId}</p>
