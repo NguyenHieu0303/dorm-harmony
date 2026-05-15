@@ -274,6 +274,7 @@ export default function ApplicationManagement() {
                   <TableRow>
                     <TableHead className="w-16">Hạng</TableHead>
                     <TableHead>Sinh viên</TableHead>
+                    <TableHead>Loại HS</TableHead>
                     <TableHead>MSSV / Khoa</TableHead>
                     <TableHead>Phân tích điểm</TableHead>
                     <TableHead className="text-center">Tổng điểm</TableHead>
