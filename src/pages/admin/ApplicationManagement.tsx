@@ -19,7 +19,7 @@ import {
 import {
   Search, Check, X, Wand2, Eye, FileText, Star, User, Mail, Phone,
   Building2, Calendar, Trophy, Users, Target, ScanLine, GraduationCap,
-  HeartHandshake, MapPin, AlertTriangle, Sparkles, Crown,
+  HeartHandshake, MapPin, AlertTriangle, Sparkles, Crown, UserPlus, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -59,6 +59,10 @@ type App = {
   building: string;
   submittedAt: string;
   faceImage: string;
+  type: "new" | "extension"; // đăng ký lần đầu / gia hạn
+  currentRoom?: string;       // phòng hiện tại (gia hạn)
+  currentBuilding?: string;   // tòa hiện tại (gia hạn)
+  semestersStayed?: number;   // số kỳ đã ở (gia hạn)
   score: {
     priority: number;   // /40
     gpa: number;        // /30
@@ -70,13 +74,13 @@ type App = {
 };
 
 const baseApps: App[] = [
-  { id: 1, studentId: "SV240001", name: "Nguyễn Văn An",  email: "an.nv@s.edu.vn",  phone: "0912345678", faculty: "CNTT", class: "K24-CNTT1", roomType: "8 người", building: "Tòa A", submittedAt: "15/07/2024", faceImage: mockFaceImages[0], score: { priority: 35, gpa: 27, distance: 18, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 2, studentId: "SV240002", name: "Trần Thị Bình",  email: "binh.tt@s.edu.vn", phone: "0923456789", faculty: "Kinh tế", class: "K24-KT2", roomType: "6 người", building: "Tòa B", submittedAt: "14/07/2024", faceImage: mockFaceImages[1], score: { priority: 28, gpa: 25, distance: 16, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 3, studentId: "SV240003", name: "Lê Văn Cường",   email: "cuong.lv@s.edu.vn",phone: "0934567890", faculty: "Cơ khí", class: "K24-CK1", roomType: "8 người", building: "Tòa A", submittedAt: "13/07/2024", faceImage: mockFaceImages[2], score: { priority: 40, gpa: 28, distance: 20, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 4, studentId: "SV240004", name: "Phạm Thị Dung",  email: "dung.pt@s.edu.vn", phone: "0945678901", faculty: "Ngoại ngữ", class: "K24-NN1", roomType: "4 người", building: "Tòa C", submittedAt: "12/07/2024", faceImage: mockFaceImages[3], score: { priority: 15, gpa: 20, distance: 12, documents: 8 }, ocr: { cccd: true, bhyt: false, enrollment: true, portrait: true }, status: "scored" },
-  { id: 5, studentId: "SV240005", name: "Hoàng Văn Em",   email: "em.hv@s.edu.vn",   phone: "0956789012", faculty: "Điện tử", class: "K24-DDT1", roomType: "8 người", building: "Tòa A", submittedAt: "11/07/2024", faceImage: mockFaceImages[4], score: { priority: 30, gpa: 26, distance: 19, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 6, studentId: "SV240006", name: "Đỗ Thị Phương",  email: "phuong.dt@s.edu.vn",phone: "0967890123", faculty: "CNTT", class: "K24-CNTT2", roomType: "6 người", building: "Tòa B", submittedAt: "10/07/2024", faceImage: mockFaceImages[5], score: { priority: 22, gpa: 24, distance: 14, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
-  { id: 7, studentId: "SV240007", name: "Vũ Minh Quang",  email: "quang.vm@s.edu.vn",phone: "0978901234", faculty: "Kinh tế", class: "K24-KT1", roomType: "8 người", building: "Tòa A", submittedAt: "09/07/2024", faceImage: mockFaceImages[6], score: { priority: 10, gpa: 22, distance: 10, documents: 7 }, ocr: { cccd: true, bhyt: false, enrollment: false, portrait: true }, status: "scored" },
+  { id: 1, studentId: "SV240001", name: "Nguyễn Văn An",  email: "an.nv@s.edu.vn",  phone: "0912345678", faculty: "CNTT", class: "K24-CNTT1", roomType: "8 người", building: "Tòa A", submittedAt: "15/07/2024", faceImage: mockFaceImages[0], type: "new", score: { priority: 35, gpa: 27, distance: 18, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 2, studentId: "SV240002", name: "Trần Thị Bình",  email: "binh.tt@s.edu.vn", phone: "0923456789", faculty: "Kinh tế", class: "K24-KT2", roomType: "6 người", building: "Tòa B", submittedAt: "14/07/2024", faceImage: mockFaceImages[1], type: "extension", currentRoom: "B305", currentBuilding: "Tòa B", semestersStayed: 2, score: { priority: 28, gpa: 25, distance: 16, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 3, studentId: "SV240003", name: "Lê Văn Cường",   email: "cuong.lv@s.edu.vn",phone: "0934567890", faculty: "Cơ khí", class: "K24-CK1", roomType: "8 người", building: "Tòa A", submittedAt: "13/07/2024", faceImage: mockFaceImages[2], type: "new", score: { priority: 40, gpa: 28, distance: 20, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 4, studentId: "SV240004", name: "Phạm Thị Dung",  email: "dung.pt@s.edu.vn", phone: "0945678901", faculty: "Ngoại ngữ", class: "K24-NN1", roomType: "4 người", building: "Tòa C", submittedAt: "12/07/2024", faceImage: mockFaceImages[3], type: "extension", currentRoom: "C201", currentBuilding: "Tòa C", semestersStayed: 4, score: { priority: 15, gpa: 20, distance: 12, documents: 8 }, ocr: { cccd: true, bhyt: false, enrollment: true, portrait: true }, status: "scored" },
+  { id: 5, studentId: "SV240005", name: "Hoàng Văn Em",   email: "em.hv@s.edu.vn",   phone: "0956789012", faculty: "Điện tử", class: "K24-DDT1", roomType: "8 người", building: "Tòa A", submittedAt: "11/07/2024", faceImage: mockFaceImages[4], type: "new", score: { priority: 30, gpa: 26, distance: 19, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 6, studentId: "SV240006", name: "Đỗ Thị Phương",  email: "phuong.dt@s.edu.vn",phone: "0967890123", faculty: "CNTT", class: "K24-CNTT2", roomType: "6 người", building: "Tòa B", submittedAt: "10/07/2024", faceImage: mockFaceImages[5], type: "extension", currentRoom: "B112", currentBuilding: "Tòa B", semestersStayed: 1, score: { priority: 22, gpa: 24, distance: 14, documents: 10 }, ocr: { cccd: true, bhyt: true, enrollment: true, portrait: true }, status: "scored" },
+  { id: 7, studentId: "SV240007", name: "Vũ Minh Quang",  email: "quang.vm@s.edu.vn",phone: "0978901234", faculty: "Kinh tế", class: "K24-KT1", roomType: "8 người", building: "Tòa A", submittedAt: "09/07/2024", faceImage: mockFaceImages[6], type: "new", score: { priority: 10, gpa: 22, distance: 10, documents: 7 }, ocr: { cccd: true, bhyt: false, enrollment: false, portrait: true }, status: "scored" },
 ];
 
 const total = (a: App) => a.score.priority + a.score.gpa + a.score.distance + a.score.documents;
@@ -85,6 +89,7 @@ export default function ApplicationManagement() {
   const [apps, setApps] = useState<App[]>(baseApps);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [selectedApp, setSelectedApp] = useState<App | null>(null);
   const [showAutoAssign, setShowAutoAssign] = useState(false);
 
@@ -99,8 +104,12 @@ export default function ApplicationManagement() {
       a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       a.studentId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchStatus = statusFilter === "all" || a.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchType = typeFilter === "all" || a.type === typeFilter;
+    return matchSearch && matchStatus && matchType;
   });
+
+  const newCount = apps.filter((a) => a.type === "new").length;
+  const extensionCount = apps.filter((a) => a.type === "extension").length;
 
   const approvedCount = apps.filter((a) => a.status === "approved").length;
   const rejectedCount = apps.filter((a) => a.status === "rejected").length;
@@ -175,6 +184,14 @@ export default function ApplicationManagement() {
                   <span className="text-warning">⏳ {waitlistCount} chờ</span>
                   <span className="text-destructive">✕ {rejectedCount} loại</span>
                 </div>
+                <div className="flex gap-2 mt-2 text-xs">
+                  <Badge variant="outline" className="border-primary/40 text-primary gap-1">
+                    <UserPlus className="h-3 w-3" /> {newCount} đăng ký mới
+                  </Badge>
+                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400 gap-1">
+                    <RefreshCw className="h-3 w-3" /> {extensionCount} gia hạn
+                  </Badge>
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
@@ -216,6 +233,16 @@ export default function ApplicationManagement() {
                   className="pl-10"
                 />
               </div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Loại hồ sơ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả loại hồ sơ</SelectItem>
+                  <SelectItem value="new">Đăng ký lần đầu</SelectItem>
+                  <SelectItem value="extension">Gia hạn</SelectItem>
+                </SelectContent>
+              </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-full md:w-56">
                   <SelectValue placeholder="Trạng thái" />
@@ -247,6 +274,7 @@ export default function ApplicationManagement() {
                   <TableRow>
                     <TableHead className="w-16">Hạng</TableHead>
                     <TableHead>Sinh viên</TableHead>
+                    <TableHead>Loại HS</TableHead>
                     <TableHead>MSSV / Khoa</TableHead>
                     <TableHead>Phân tích điểm</TableHead>
                     <TableHead className="text-center">Tổng điểm</TableHead>
@@ -260,7 +288,7 @@ export default function ApplicationManagement() {
                     const t = total(a);
                     const inSlot = a.rank <= currentBatch.quota;
                     return (
-                      <TableRow key={a.id} className={inSlot ? "bg-success/5" : ""}>
+                      <TableRow key={a.id} className={`${inSlot ? "bg-success/5" : ""} ${a.type === "extension" ? "border-l-4 border-l-emerald-500/60" : "border-l-4 border-l-primary/40"}`}>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             {a.rank <= 3 && <Crown className={`h-4 w-4 ${a.rank === 1 ? "text-warning" : "text-muted-foreground"}`} />}
@@ -280,6 +308,25 @@ export default function ApplicationManagement() {
                               <p className="text-xs text-muted-foreground">{a.roomType} · {a.building}</p>
                             </div>
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {a.type === "extension" ? (
+                            <div className="space-y-1">
+                              <Badge className="gap-1 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/15">
+                                <RefreshCw className="h-3 w-3" /> Gia hạn
+                              </Badge>
+                              <p className="text-[11px] text-muted-foreground">
+                                Phòng cũ: <b>{a.currentRoom}</b> · {a.currentBuilding}
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                Đã ở <b>{a.semestersStayed}</b> kỳ
+                              </p>
+                            </div>
+                          ) : (
+                            <Badge className="gap-1 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/10">
+                              <UserPlus className="h-3 w-3" /> Đăng ký mới
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell>
                           <p className="text-sm font-medium">{a.studentId}</p>
@@ -369,6 +416,25 @@ export default function ApplicationManagement() {
                   </div>
                 </div>
                 <div className="md:col-span-2 space-y-4">
+                  <div className={`rounded-lg border p-3 flex items-start gap-3 ${selectedApp.type === "extension" ? "bg-emerald-500/5 border-emerald-500/30" : "bg-primary/5 border-primary/30"}`}>
+                    {selectedApp.type === "extension" ? (
+                      <RefreshCw className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                    ) : (
+                      <UserPlus className="h-5 w-5 text-primary mt-0.5" />
+                    )}
+                    <div className="text-sm">
+                      <p className="font-semibold">
+                        {selectedApp.type === "extension" ? "Hồ sơ gia hạn ở KTX" : "Hồ sơ đăng ký lần đầu"}
+                      </p>
+                      {selectedApp.type === "extension" ? (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Phòng hiện tại: <b>{selectedApp.currentRoom}</b> ({selectedApp.currentBuilding}) · Đã ở <b>{selectedApp.semestersStayed}</b> kỳ · Nguyện vọng kỳ tới: <b>{selectedApp.roomType} - {selectedApp.building}</b>
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground mt-0.5">Sinh viên lần đầu đăng ký vào ở KTX</p>
+                      )}
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <Info icon={User}      label="Họ tên"     value={selectedApp.name} />
                     <Info icon={FileText}  label="MSSV"       value={selectedApp.studentId} />
