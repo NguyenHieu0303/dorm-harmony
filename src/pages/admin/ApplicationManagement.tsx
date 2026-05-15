@@ -19,7 +19,7 @@ import {
 import {
   Search, Check, X, Wand2, Eye, FileText, Star, User, Mail, Phone,
   Building2, Calendar, Trophy, Users, Target, ScanLine, GraduationCap,
-  HeartHandshake, MapPin, AlertTriangle, Sparkles, Crown,
+  HeartHandshake, MapPin, AlertTriangle, Sparkles, Crown, UserPlus, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
