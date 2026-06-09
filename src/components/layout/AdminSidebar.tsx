@@ -10,17 +10,20 @@ import {
   Building2,
   Home,
   Wallet,
+  ShieldCheck,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
-  { title: "Thông tin cá nhân", url: "/admin/profile", icon: Users },
+  { title: "Thông tin cá nhân", url: "/admin/profile", icon: UserCog },
   { title: "Quản lý hồ sơ", url: "/admin/applications", icon: Users },
   { title: "Quản lý phòng", url: "/admin/rooms", icon: Home },
   { title: "Tiền điện nước", url: "/admin/billing", icon: Wallet },
   { title: "Quản lý sửa chữa", url: "/admin/repairs", icon: Wrench },
+  { title: "Tài khoản & phân quyền", url: "/admin/users", icon: ShieldCheck },
 ];
 
 interface AdminSidebarProps {
