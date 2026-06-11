@@ -17,6 +17,7 @@ import BillingManagement from "./pages/admin/BillingManagement";
 import RepairManagement from "./pages/admin/RepairManagement";
 import AdminProfile from "./pages/admin/AdminProfile";
 import UserManagement from "./pages/admin/UserManagement";
+import NotificationManagement from "./pages/admin/NotificationManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/admin/repairs" element={<RepairManagement />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
           <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/notifications" element={<NotificationManagement />} />
           
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
