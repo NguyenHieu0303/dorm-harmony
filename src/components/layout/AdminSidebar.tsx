@@ -12,6 +12,7 @@ import {
   Wallet,
   ShieldCheck,
   UserCog,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const menuItems = [
   { title: "Quản lý phòng", url: "/admin/rooms", icon: Home },
   { title: "Tiền điện nước", url: "/admin/billing", icon: Wallet },
   { title: "Quản lý sửa chữa", url: "/admin/repairs", icon: Wrench },
+  { title: "Quản lý thông báo", url: "/admin/notifications", icon: Bell },
   { title: "Tài khoản & phân quyền", url: "/admin/users", icon: ShieldCheck },
 ];
 
